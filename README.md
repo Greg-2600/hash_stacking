@@ -2,6 +2,8 @@
 Recursively hash some salted data X iterations - returns JSON result
 
 The data to hash can be sent via STDIN or as an argument
+
+
 Usage:
 
 ./hash_stacking.sh data
@@ -10,8 +12,6 @@ cat data.file|./hash_stacking.sh
 
 
 
-
-Example output:
 
 
 {
