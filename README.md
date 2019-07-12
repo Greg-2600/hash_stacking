@@ -9,7 +9,10 @@ Usage:
 cat data.file|./hash_stacking.sh
 
 
+
+
 Example output:
+
 
 {
 
@@ -22,4 +25,5 @@ Example output:
 	"iterations": "100",
   
 	"hash": "79521b8bd9c36209f304ab005576eca116dafb7fcecfd80241e1aa7d37ee97c6"
+
 }
