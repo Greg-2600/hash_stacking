@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 get_usage() {
 # help message
@@ -15,14 +15,13 @@ get_input() {
 # 	get_input input
 # 	echo "input"|get_input
 
-	while read -t 1 stdin_line; do
-		stdin+=$stdin_line
-		echo $stdin_line
+	while read -t 1 -r stdin_line; do
+		stdin+="$stdin_line"
+		echo "$stdin_line"
 	done
 
 	if [ -z "$stdin" ]; then
-		stdin=$@
-		echo $stdin
+		echo "$@"
 	fi
 }
 
@@ -33,31 +32,31 @@ get_hash() {
 	# all algorithms supported by osx shasum
 	#sha_alg='1 224 256 384 512 512224 512256'
 
-	alg='256'                # sha algorithm
+	alg=256                  # sha algorithm
 	iterations=100           # depth of recursions
 
-	block=$@                 # data to hash
-	salt=$RANDOM$RANDOM      # arbitrary salt
+	block=("$@")             # data to hash
+	salt="$RANDOM$RANDOM"    # arbitrary salt
 	this_hash="$salt $block" # genesis hash, and external loop scope storage
 
 	# iterate for count of recursion depth
-	for (( i = 0; i < $iterations; i++ )); do
+	for (( i = 0; i < iterations; i++ )); do
 
 		# if we want to use more than 1 algorithm...
 		#for alg in $sha_alg; do
 
 		# do the math and send product out of scope
 		this_hash=$(
-			echo $this_hash| # reference from outside of loop scope
-			shasum -a $alg|  # set the sha algorithm
-			cut -f1 -d' '    # unfortuently there is a trailing space and dash
+			echo "$this_hash"| # reference from outside of loop scope
+			shasum -a $alg|    # set the sha algorithm
+			cut -f1 -d' '      # unfortuently there is a trailing space and dash
 		)
 		#done
 	done
 
 	# express product result as valid json object
 	echo "{"
-	echo "	\"block\": \"$block\","
+	echo "	\"block\": \"${block[*]}\","
 	echo "	\"salt\": \"$salt\","
 	echo "	\"algorithms\": \"SHA: $alg\","
 	echo "	\"iterations\": \"$iterations\","
@@ -72,14 +71,14 @@ main() {
 # performs flow control, input validation, and exception handling
 
 	# assign argument stack from get_input
-	block=$@
+	stack=("$@")
 	# validate data exists or send help and explode
-	if [ -z "$block" ]; then
+	if [ -z "${stack[*]}" ]; then
 		get_usage
 	fi
 	# call get_hash and send the stack
-	get_hash $@
+	get_hash "${stack[*]}"
 }
 
 
-main $(get_input $@)
+main "$(get_input "$@")"
